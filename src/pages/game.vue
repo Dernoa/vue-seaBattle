@@ -13,9 +13,7 @@
 						{{ sessionStore.playerNickname }} (Turn {{ turnCounter }})
 					</div>
 					<div>
-						<play-grid
-							:board-id="sessionStore.playerNickname"
-						></play-grid>
+						<play-grid :board-id="sessionStore.playerNickname"></play-grid>
 					</div>
 				</div>
 				<warships-list></warships-list>
@@ -42,7 +40,6 @@ const player1Turn = ref(true);
 const turnCounter = ref(0);
 const selectedWarsip = ref(null);
 const sessionStore = useSessionStore();
-
 
 function selectWarship(id: string) {}
 </script>

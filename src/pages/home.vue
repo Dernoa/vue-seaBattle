@@ -2,9 +2,7 @@
 	<div class="main">
 		<div>
 			<div class="nameContainer">
-                <div>
-                    Player 1:
-                </div>
+				<div>Player 1:</div>
 				<div>
 					<my-input
 						input-type="text"
@@ -17,14 +15,12 @@
 					<my-button @click="buttonSaveFirstPlayerNickname">Save</my-button>
 				</div>
 			</div>
-            <div v-if="!wantPlayLocal" class="nameContainer">
-                <span>Add second player?</span>
-                <my-button @click="addSecondPlayer">Yes</my-button>
-            </div>
+			<div v-if="!wantPlayLocal" class="nameContainer">
+				<span>Add second player?</span>
+				<my-button @click="addSecondPlayer">Yes</my-button>
+			</div>
 			<div class="nameContainer" v-if="wantPlayLocal">
-                <div>
-                    Player 2:
-                </div>
+				<div>Player 2:</div>
 				<div>
 					<my-input
 						input-type="text"
@@ -42,19 +38,13 @@
 			<div>Choose type of a game</div>
 			<div class="gameTypeContainer">
 				<div>
-					<my-button @click="buttonSetGameTypeAndRun(0)"
-						>VS BOT</my-button
-					>
+					<my-button @click="buttonSetGameTypeAndRun(0)">VS BOT</my-button>
 				</div>
 				<div v-if="wantPlayLocal">
-					<my-button @click="buttonSetGameTypeAndRun(1)"
-						>VS PLAYER(Local)</my-button
-					>
+					<my-button @click="buttonSetGameTypeAndRun(1)">VS PLAYER(Local)</my-button>
 				</div>
 				<div>
-					<my-button @click="buttonSetGameTypeAndRun(2)"
-						>VS PLAYER(Network)</my-button
-					>
+					<my-button @click="buttonSetGameTypeAndRun(2)">VS PLAYER(Network)</my-button>
 				</div>
 			</div>
 		</div>
@@ -86,8 +76,8 @@ function buttonSaveFirstPlayerNickname() {
 function buttonSaveSecondPlayerNickname() {
 	sessionStore.setSecondPlayerNickname(nickname2.value);
 }
-function addSecondPlayer(){
-    wantPlayLocal.value = true; 
+function addSecondPlayer() {
+	wantPlayLocal.value = true;
 }
 </script>
 
@@ -105,7 +95,7 @@ function addSecondPlayer(){
 }
 .nameContainer {
 	display: flex;
-    align-items: center;
+	align-items: center;
 }
 .nameMyInput :deep(.input) {
 	height: 5vh;

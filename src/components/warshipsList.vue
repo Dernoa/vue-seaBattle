@@ -1,10 +1,7 @@
 <template>
 	<div class="warshipsList">
 		<h3>Warships Available:</h3>
-		<div
-			v-for="warship in warshipsAvailable.warship1.available"
-			:key="`warship1-${warship}`"
-		>
+		<div v-for="warship in warshipsAvailable.warship1.available" :key="`warship1-${warship}`">
 			<img
 				src="../images/BoatH1.png"
 				width="40px"
@@ -15,10 +12,7 @@
 				@dragstart="onDragStart($event)"
 			/>
 		</div>
-		<div
-			v-for="warship in warshipsAvailable.warship2.available"
-			:key="`warship2-${warship}`"
-		>
+		<div v-for="warship in warshipsAvailable.warship2.available" :key="`warship2-${warship}`">
 			<img
 				src="../images/BoatH2.png"
 				width="80px"
@@ -29,10 +23,7 @@
 				@dragstart="onDragStart($event)"
 			/>
 		</div>
-		<div
-			v-for="warship in warshipsAvailable.warship3.available"
-			:key="`warship3-${warship}`"
-		>
+		<div v-for="warship in warshipsAvailable.warship3.available" :key="`warship3-${warship}`">
 			<img
 				src="../images/BoatH3.png"
 				width="120px"
@@ -43,10 +34,7 @@
 				@dragstart="onDragStart($event)"
 			/>
 		</div>
-		<div
-			v-for="warship in warshipsAvailable.warship4.available"
-			:key="`warship4-${warship}`"
-		>
+		<div v-for="warship in warshipsAvailable.warship4.available" :key="`warship4-${warship}`">
 			<img
 				src="../images/BoatH4.png"
 				width="160px"
@@ -85,7 +73,7 @@ const warshipsAvailable = reactive({
 	},
 });
 
-function onDragStart(event: Event){
+function onDragStart(event: Event) {
 	dragStore.dragItem = event.target as HTMLElement;
 }
 </script>
