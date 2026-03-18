@@ -31,24 +31,14 @@ const props = defineProps({
 	},
 });
 
-const highlightCells = (
-	row: number,
-	col: number,
-	size: number,
-	className: string,
-) => {
+const highlightCells = (row: number, col: number, size: number, className: string) => {
 	for (let i = col; i < col + size; i++) {
 		const cell = document.getElementById(`${row}-${i}`);
 		cell?.classList.add(className);
 	}
 };
 
-const unhighlightCells = (
-	row: number,
-	col: number,
-	size: number,
-	className: string,
-) => {
+const unhighlightCells = (row: number, col: number, size: number, className: string) => {
 	for (let i = col; i < col + size; i++) {
 		const cell = document.getElementById(`${row}-${i}`);
 		cell?.classList.remove(className);
@@ -63,24 +53,20 @@ const onDragOver = (event: DragEvent) => {
 		dragStore.dragItem?.dataset.size &&
 		Number(dragStore.dragItem.dataset.size) > 0 &&
 		Number(target.dataset.col) >= 0 &&
-		Number(target.dataset.col) + Number(dragStore.dragItem.dataset.size) <=
-			10
+		Number(target.dataset.col) + Number(dragStore.dragItem.dataset.size) <= 10
 	) {
 		highlightCells(
 			Number(target.dataset.row),
 			Number(target.dataset.col),
 			Number(dragStore.dragItem.dataset.size),
-			'drag-hover',
+			'drag-hover'
 		);
-	} else if (
-		dragStore.dragItem?.dataset.size &&
-		Number(dragStore.dragItem.dataset.size) > 0
-	) {
+	} else if (dragStore.dragItem?.dataset.size && Number(dragStore.dragItem.dataset.size) > 0) {
 		highlightCells(
 			Number(target.dataset.row),
 			Number(target.dataset.col),
 			Number(dragStore.dragItem.dataset.size),
-			'drag-hover-wrong',
+			'drag-hover-wrong'
 		);
 	}
 };
@@ -88,21 +74,18 @@ const onDragOver = (event: DragEvent) => {
 const onDragLeave = (event: DragEvent) => {
 	const target = event.target as HTMLElement;
 
-	if (
-		dragStore.dragItem?.dataset.size &&
-		Number(dragStore.dragItem.dataset.size) > 0
-	) {
+	if (dragStore.dragItem?.dataset.size && Number(dragStore.dragItem.dataset.size) > 0) {
 		unhighlightCells(
 			Number(target.dataset.row),
 			Number(target.dataset.col),
 			Number(dragStore.dragItem.dataset.size),
-			'drag-hover',
+			'drag-hover'
 		);
 		unhighlightCells(
 			Number(target.dataset.row),
 			Number(target.dataset.col),
 			Number(dragStore.dragItem.dataset.size),
-			'drag-hover-wrong',
+			'drag-hover-wrong'
 		);
 	}
 };

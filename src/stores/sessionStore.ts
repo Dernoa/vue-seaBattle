@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 export const useSessionStore = defineStore('sessionStore', {
 	state: () => ({
 		playerNickname: 'Player 1',
-        player2Nickname: 'Player 2',
+		player2Nickname: 'Player 2',
 		gameTypes: ['vsBot', 'vsPlayerLocal', 'vsPlayerNetwork'],
 		selectedGameType: '',
 	}),

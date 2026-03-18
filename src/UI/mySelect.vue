@@ -2,11 +2,7 @@
 	<div>
 		<select v-model="value" @change="sendValue">
 			<option disabled value="">Choose</option>
-			<option
-				v-for="(option, index) in options"
-				:key="index"
-				:value="option"
-			>
+			<option v-for="(option, index) in options" :key="index" :value="option">
 				{{ option }}
 			</option>
 		</select>
