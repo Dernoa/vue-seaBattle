@@ -34,14 +34,13 @@
 import playGrid from '@/components/playGrid.vue';
 import warshipsList from '@/components/warshipsList.vue';
 import { useSessionStore } from '@/stores/sessionStore';
-import { computed, reactive, ref } from 'vue';
+import { ref } from 'vue';
 
 const player1Turn = ref(true);
 const turnCounter = ref(0);
-const selectedWarsip = ref(null);
+
 const sessionStore = useSessionStore();
 
-function selectWarship(id: string) {}
 </script>
 
 <style scoped>
