@@ -6,10 +6,8 @@
 				src="../images/BoatH1.png"
 				width="40px"
 				height="40px"
-				draggable="true"
 				data-size="1"
 				:id="`warship1-${warship}`"
-				@dragstart="onDragStart($event)"
 			/>
 		</div>
 		<div v-for="warship in warshipsAvailable.warship2.available" :key="`warship2-${warship}`">
@@ -17,10 +15,8 @@
 				src="../images/BoatH2.png"
 				width="80px"
 				height="40px"
-				draggable="true"
 				data-size="2"
 				:id="`warship2-${warship}`"
-				@dragstart="onDragStart($event)"
 			/>
 		</div>
 		<div v-for="warship in warshipsAvailable.warship3.available" :key="`warship3-${warship}`">
@@ -28,10 +24,8 @@
 				src="../images/BoatH3.png"
 				width="120px"
 				height="40px"
-				draggable="true"
 				data-size="3"
 				:id="`warship3-${warship}`"
-				@dragstart="onDragStart($event)"
 			/>
 		</div>
 		<div v-for="warship in warshipsAvailable.warship4.available" :key="`warship4-${warship}`">
@@ -39,10 +33,8 @@
 				src="../images/BoatH4.png"
 				width="160px"
 				height="40px"
-				draggable="true"
 				data-size="4"
 				:id="`warship4-${warship}`"
-				@dragstart="onDragStart($event)"
 			/>
 		</div>
 	</div>
@@ -50,9 +42,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
-import { useDragStore } from '@/stores/dragStore';
 
-const dragStore = useDragStore();
 
 const warshipsAvailable = reactive({
 	warship1: {
@@ -73,9 +63,6 @@ const warshipsAvailable = reactive({
 	},
 });
 
-function onDragStart(event: Event) {
-	dragStore.dragItem = event.target as HTMLElement;
-}
 </script>
 
 <style scoped></style>
