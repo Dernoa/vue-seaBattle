@@ -1,19 +1,20 @@
 <template>
 	<div class="gridContainer" :id="boardId">
 		<div v-for="col in 10" :key="col" class="col">
-			<div
+			<DroppableCell
 				v-for="row in 10"
 				:key="row"
 				class="cell"
-				:data-row="row - 1"
-				:data-col="col - 1"
+				:row="row - 1"
+				:col="col - 1"
 				:id="`${row - 1}-${col - 1}`"
-			></div>
+			/>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
+import DroppableCell from './DroppableCell.vue';
 
 const props = defineProps({
 	boardId: {
@@ -35,7 +36,7 @@ const props = defineProps({
 	background-color: #e3f2fd;
 	border: 2px solid #1976d2;
 }
-.cell {
+.drop-zone {
 	width: 40px;
 	height: 40px;
 	border: 2px solid #1976d2;
