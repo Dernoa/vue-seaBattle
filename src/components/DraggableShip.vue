@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { useTemplateRef, onMounted } from 'vue';
+import { useTemplateRef } from 'vue';
 import { makeDraggable } from '@vue-dnd-kit/core';
 
 const props = defineProps<{
@@ -23,9 +23,5 @@ const props = defineProps<{
 
 const el = useTemplateRef<HTMLElement>('el');
 
-onMounted(() => {
-  if (el.value) {
-    makeDraggable(el, { dragHandle: '.handle' });
-  }
-});
+makeDraggable(el);
 </script>
