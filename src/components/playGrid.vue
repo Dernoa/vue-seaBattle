@@ -1,137 +1,102 @@
 <template>
-	<div class="gridContainer" :id="boardId">
-		<div v-for="col in 10" :key="col" class="col">
+	<div class="gridContainer" :id="boardId" ref="gridContainer">
+		<div class="grid">
+			<template v-for="row in 10" :key="row">
+				<DroppableCell
+					v-for="col in 10"
+					:key="`${row}-${col}`"
+					class="cell"
+					:row="row - 1"
+					:col="col - 1"
+					:on-place="handlePlace"
+					:placeable="isPlaceable(row - 1, col - 1)"
+				/>
+			</template>
+		</div>
+		<div class="ships-layer">
 			<div
-				v-for="row in 10"
-				:key="row"
-				class="cell"
-				:data-row="row - 1"
-				:data-col="col - 1"
-				:id="`${row - 1}-${col - 1}`"
-				@dragover="onDragOver"
-				@dragleave="onDragLeave"
-				@drop="onDrop"
-			></div>
+				v-for="ship in placedShips"
+				:key="ship.id"
+				class="placed-ship"
+				:style="{
+					left: ship.col * 40 + 'px',
+					top: ship.row * 40 + 'px',
+					width: ship.size * 40 + 'px',
+					height: '40px',
+				}"
+			>
+				<img :src="ship.src" :width="ship.size * 40" height="40" />
+			</div>
 		</div>
 	</div>
 </template>
+>
 
 <script setup lang="ts">
-import { useDragStore } from '@/stores/dragStore';
-import { useGameStore } from '@/stores/gameStore';
-import { watch, ref } from 'vue';
+import DroppableCell from './DroppableCell.vue';
 
-const dragStore = useDragStore();
-const gameStore = useGameStore();
+import type { IPlacedShip } from '@/constants/interfaces';
 
-const props = defineProps({
-	boardId: {
-		type: String,
-		required: true,
-	},
-});
+const props = defineProps<{
+	boardId?: string;
+	placedShips?: IPlacedShip[];
+	blockedCells: string[];
+}>();
 
-const highlightCells = (row: number, col: number, size: number, className: string) => {
-	for (let i = col; i < col + size; i++) {
-		const cell = document.getElementById(`${row}-${i}`);
-		cell?.classList.add(className);
-	}
+const emit = defineEmits<{
+	(e: 'placeShip', row: number, col: number, shipData: any): void;
+}>();
+
+const handlePlace = (row: number, col: number, shipData: any) => {
+	emit('placeShip', row, col, shipData);
 };
 
-const unhighlightCells = (row: number, col: number, size: number, className: string) => {
-	for (let i = col; i < col + size; i++) {
-		const cell = document.getElementById(`${row}-${i}`);
-		cell?.classList.remove(className);
-	}
-};
-
-const onDragOver = (event: DragEvent) => {
-	event.preventDefault();
-	const target = event.target as HTMLElement;
-
-	if (
-		dragStore.dragItem?.dataset.size &&
-		Number(dragStore.dragItem.dataset.size) > 0 &&
-		Number(target.dataset.col) >= 0 &&
-		Number(target.dataset.col) + Number(dragStore.dragItem.dataset.size) <= 10
-	) {
-		highlightCells(
-			Number(target.dataset.row),
-			Number(target.dataset.col),
-			Number(dragStore.dragItem.dataset.size),
-			'drag-hover'
-		);
-	} else if (dragStore.dragItem?.dataset.size && Number(dragStore.dragItem.dataset.size) > 0) {
-		highlightCells(
-			Number(target.dataset.row),
-			Number(target.dataset.col),
-			Number(dragStore.dragItem.dataset.size),
-			'drag-hover-wrong'
-		);
-	}
-};
-
-const onDragLeave = (event: DragEvent) => {
-	const target = event.target as HTMLElement;
-
-	if (dragStore.dragItem?.dataset.size && Number(dragStore.dragItem.dataset.size) > 0) {
-		unhighlightCells(
-			Number(target.dataset.row),
-			Number(target.dataset.col),
-			Number(dragStore.dragItem.dataset.size),
-			'drag-hover'
-		);
-		unhighlightCells(
-			Number(target.dataset.row),
-			Number(target.dataset.col),
-			Number(dragStore.dragItem.dataset.size),
-			'drag-hover-wrong'
-		);
-	}
-};
-
-const onDrop = (event: DragEvent) => {
-	event.preventDefault();
-	const target = event.target as HTMLElement;
-	const row = Number(target.dataset.row);
-	const col = Number(target.dataset.col);
-	const size = Number(dragStore.dragItem?.dataset.size) || 0;
-
-	if (dragStore.dragItem?.dataset.size && size > 0) {
-		unhighlightCells(row, col, size, 'drag-hover');
-		unhighlightCells(row, col, size, 'drag-hover-wrong');
-
-		if (col >= 0 && col + size <= 10) {
-			gameStore.initializeShip(col, row, size);
-		}
-	}
+const isPlaceable = (row: number, col: number): boolean => {
+	return !props.blockedCells.includes(`${row}-${col}`);
 };
 </script>
 
 <style scoped>
 .gridContainer {
-	display: grid;
+	position: relative;
 	width: 400px;
 	height: 400px;
 	margin: 20px;
+	background-color: #e3f2fd;
+	/* border: 2px solid #1976d2; баг с границей*/
+}
+
+.grid {
+	display: grid;
 	grid-template-columns: repeat(10, 40px);
 	grid-template-rows: repeat(10, 40px);
-	background-color: #e3f2fd;
-	border: 2px solid #1976d2;
+	width: 100%;
+	height: 100%;
 }
+
 .cell {
 	width: 40px;
 	height: 40px;
-	border: 2px solid #1976d2;
+	border: 1px solid #1976d2;
+	box-sizing: border-box;
 }
 
-.cell.drag-hover {
-	background-color: rgba(0, 255, 0, 0.1);
-	border: 2px dashed #4caf50;
+.cell[data-placeable='false'] {
+	background-color: lightgray;
+	cursor: not-allowed;
 }
 
-.cell.drag-hover-wrong {
-	background-color: rgba(250, 0, 0, 0.58);
-	border: 2px dashed red;
+.ships-layer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+}
+
+.placed-ship {
+	position: absolute;
+	pointer-events: none;
 }
 </style>

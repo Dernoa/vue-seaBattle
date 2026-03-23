@@ -1,12 +1,16 @@
 <template>
-	<div class="app">
-		<keep-alive>
-			<router-view></router-view>
-		</keep-alive>
-	</div>
+	<DnDProvider>
+		<div class="app">
+			<keep-alive>
+				<router-view></router-view>
+			</keep-alive>
+		</div>
+	</DnDProvider>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { DnDProvider } from '@vue-dnd-kit/core';
+</script>
 
 <style>
 * {
