@@ -1,5 +1,11 @@
 <template>
-	<div class="cell" :data-row="row" :data-col="col" :id="`${row}-${col}`" ref="el"></div>
+	<div
+		:data-row="row"
+		:data-col="col"
+		:data-placeable="placeable"
+		:id="`${row}-${col}`"
+		ref="el"
+	></div>
 </template>
 
 <script setup lang="ts">
@@ -9,6 +15,7 @@ import { makeDroppable } from '@vue-dnd-kit/core';
 const props = defineProps<{
 	row: number;
 	col: number;
+	placeable: boolean;
 	onPlace?: (row: number, col: number, shipData: any) => void;
 }>();
 

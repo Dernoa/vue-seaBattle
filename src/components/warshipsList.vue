@@ -46,8 +46,8 @@ import DraggableShip from './DraggableShip.vue';
 import type { IAvailableShips } from '@/constants/interfaces';
 
 const props = defineProps<{
-	warshipsAvailable: IAvailableShips
-}>()
+	warshipsAvailable: IAvailableShips;
+}>();
 </script>
 
 <style scoped></style>

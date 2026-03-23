@@ -9,6 +9,7 @@
 					:row="row - 1"
 					:col="col - 1"
 					:on-place="handlePlace"
+					:placeable="isPlaceable(row - 1, col - 1)"
 				/>
 			</template>
 		</div>
@@ -36,10 +37,10 @@ import DroppableCell from './DroppableCell.vue';
 
 import type { IPlacedShip } from '@/constants/interfaces';
 
-
 const props = defineProps<{
 	boardId?: string;
 	placedShips?: IPlacedShip[];
+	blockedCells: string[];
 }>();
 
 const emit = defineEmits<{
@@ -48,6 +49,10 @@ const emit = defineEmits<{
 
 const handlePlace = (row: number, col: number, shipData: any) => {
 	emit('placeShip', row, col, shipData);
+};
+
+const isPlaceable = (row: number, col: number): boolean => {
+	return !props.blockedCells.includes(`${row}-${col}`);
 };
 </script>
 
@@ -74,6 +79,11 @@ const handlePlace = (row: number, col: number, shipData: any) => {
 	height: 40px;
 	border: 1px solid #1976d2;
 	box-sizing: border-box;
+}
+
+.cell[data-placeable='false'] {
+	background-color: lightgray;
+	cursor: not-allowed;
 }
 
 .ships-layer {
