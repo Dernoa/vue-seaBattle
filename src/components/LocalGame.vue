@@ -22,10 +22,10 @@
 			</div>
 			<div v-if="player1.warshipsNotAvailable">
 				<div v-if="game.turnCounter == 0">
-					<my-button @click="game.nextTurn">Confirm</my-button>
+					<my-button @click="() => game.nextTurn()">Confirm</my-button>
 					<my-button>Reset</my-button>
 				</div>
-				<my-button v-else>Next Turn</my-button>
+				<my-button v-else @click="() => game.nextTurn()">Next Turn</my-button>
 			</div>
 		</div>
 
@@ -48,15 +48,15 @@
 					<warships-list
 						:warships-available="player2.warshipsAvailable"
 						v-if="!player2.warshipsNotAvailable"
-					/>					
+					/>
 				</div>
 			</div>
 			<div v-if="player2.warshipsNotAvailable">
 				<div v-if="game.turnCounter == 0">
-					<my-button @click="game.nextTurn">Confirm</my-button>
+					<my-button @click="() => game.nextTurn()">Confirm</my-button>
 					<my-button>Reset</my-button>
 				</div>
-				<my-button v-else>Next Turn</my-button>
+				<my-button v-else @click="() => game.nextTurn()">Next Turn</my-button>
 			</div>
 		</div>
 	</div>

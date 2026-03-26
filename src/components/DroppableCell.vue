@@ -2,7 +2,7 @@
 	<div
 		:data-row="row"
 		:data-col="col"
-		:data-placeable="placeable"
+		:data-placeable="!blocked ? 'true' : 'false'"
 		:id="`${row}-${col}`"
 		ref="el"
 	></div>
@@ -15,7 +15,7 @@ import { makeDroppable } from '@vue-dnd-kit/core';
 const props = defineProps<{
 	row: number;
 	col: number;
-	placeable: boolean;
+	blocked?: boolean;
 	onPlace?: (row: number, col: number, shipData: any) => void;
 }>();
 

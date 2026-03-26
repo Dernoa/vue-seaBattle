@@ -1,8 +1,11 @@
+import type { Orientations } from './types';
+
 export interface IPlacedShip {
 	id: string;
 	size: number;
 	row: number;
 	col: number;
+	orientation: Orientations;
 	src: string;
 }
 

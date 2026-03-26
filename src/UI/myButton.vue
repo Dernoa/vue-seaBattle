@@ -1,12 +1,14 @@
 <template>
 	<div>
-		<button class="btn">
+		<button class="btn" @click="$emit('click', $event)">
 			<slot></slot>
 		</button>
 	</div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+defineEmits(['click'])
+</script>
 
 <style scoped>
 .btn {

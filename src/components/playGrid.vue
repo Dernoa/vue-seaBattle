@@ -8,8 +8,8 @@
 					class="cell"
 					:row="row - 1"
 					:col="col - 1"
+					:blocked="isCellBlocked(row - 1, col - 1)"
 					:on-place="handlePlace"
-					:placeable="isPlaceable(row - 1, col - 1)"
 				/>
 			</template>
 		</div>
@@ -21,11 +21,19 @@
 				:style="{
 					left: ship.col * 40 + 'px',
 					top: ship.row * 40 + 'px',
-					width: ship.size * 40 + 'px',
-					height: '40px',
+					width: ship.orientation === 'horizontal' ? ship.size * 40 + 'px' : '40px',
+					height: ship.orientation === 'horizontal' ? '40px' : ship.size * 40 + 'px',
 				}"
 			>
-				<img :src="ship.src" :width="ship.size * 40" height="40" />
+				<img
+					:src="ship.src"
+					:width="ship.size * 40"
+					height="40"
+					:style="{ 
+							transform: ship.orientation === 'vertical' ? 'rotate(90deg)' : 'none',
+							transformOrigin: '20px 20px' 
+					}"
+				/>
 			</div>
 		</div>
 	</div>
@@ -43,16 +51,16 @@ const props = defineProps<{
 	blockedCells: string[];
 }>();
 
+const isCellBlocked = (row: number, col: number): boolean => {
+	return props.blockedCells.includes(`${row}-${col}`);
+};
+
 const emit = defineEmits<{
 	(e: 'placeShip', row: number, col: number, shipData: any): void;
 }>();
 
 const handlePlace = (row: number, col: number, shipData: any) => {
 	emit('placeShip', row, col, shipData);
-};
-
-const isPlaceable = (row: number, col: number): boolean => {
-	return !props.blockedCells.includes(`${row}-${col}`);
 };
 </script>
 

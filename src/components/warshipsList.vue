@@ -8,6 +8,7 @@
 				height="40px"
 				:size="1"
 				:id="`warship1-${warship}`"
+				:change-orientation-is-possible="true"
 			/>
 		</div>
 		<div v-for="warship in warshipsAvailable.warship2.count" :key="`warship2-${warship}`">
@@ -17,6 +18,7 @@
 				height="40px"
 				:size="2"
 				:id="`warship2-${warship}`"
+				:change-orientation-is-possible="true"
 			/>
 		</div>
 		<div v-for="warship in warshipsAvailable.warship3.count" :key="`warship3-${warship}`">
@@ -26,6 +28,7 @@
 				height="40px"
 				:size="3"
 				:id="`warship3-${warship}`"
+				:change-orientation-is-possible="true"
 			/>
 		</div>
 		<div v-for="warship in warshipsAvailable.warship4.count" :key="`warship4-${warship}`">
@@ -35,6 +38,7 @@
 				height="40px"
 				:size="4"
 				:id="`warship4-${warship}`"
+				:change-orientation-is-possible="true"
 			/>
 		</div>
 	</div>
