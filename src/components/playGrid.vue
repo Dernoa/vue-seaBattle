@@ -1,5 +1,5 @@
 <template>
-	<div class="gridContainer" :id="boardId" ref="gridContainer">
+	<div class="gridContainer" :id="boardId">
 		<div class="grid">
 			<template v-for="row in 10" :key="row">
 				<DroppableCell
@@ -9,7 +9,7 @@
 					:row="row - 1"
 					:col="col - 1"
 					:blocked="isCellBlocked(row - 1, col - 1)"
-					:on-place="handlePlace"
+					@place-ship="handlePlace"
 				/>
 			</template>
 		</div>
@@ -19,35 +19,36 @@
 				:key="ship.id"
 				class="placed-ship"
 				:style="{
-					left: ship.col * 40 + 'px',
-					top: ship.row * 40 + 'px',
-					width: ship.orientation === 'horizontal' ? ship.size * 40 + 'px' : '40px',
-					height: ship.orientation === 'horizontal' ? '40px' : ship.size * 40 + 'px',
+					left: ship.col * CELL_SIZE + 'px',
+					top: ship.row * CELL_SIZE + 'px',
+					width: ship.orientation === 'horizontal' ? ship.size * CELL_SIZE + 'px' : '40px',
+					height: ship.orientation === 'horizontal' ? '40px' : ship.size * CELL_SIZE + 'px',
 				}"
 			>
 				<img
 					:src="ship.src"
-					:width="ship.size * 40"
-					height="40"
-					:style="{ 
-							transform: ship.orientation === 'vertical' ? 'rotate(90deg)' : 'none',
-							transformOrigin: '20px 20px' 
+					:width="ship.size * CELL_SIZE"
+					height="CELL_SIZE"
+					:style="{
+						transform: ship.orientation === 'vertical' ? 'rotate(90deg)' : 'none',
+						transformOrigin: '20px 20px',
 					}"
 				/>
 			</div>
 		</div>
 	</div>
 </template>
->
 
 <script setup lang="ts">
 import DroppableCell from './DroppableCell.vue';
 
-import type { IPlacedShip } from '@/constants/interfaces';
+import { CELL_SIZE } from '@/constants/constants';
+
+import type { IPlacedShip, IDragShipData } from '@/constants/interfaces';
 
 const props = defineProps<{
 	boardId?: string;
-	placedShips?: IPlacedShip[];
+	placedShips: IPlacedShip[];
 	blockedCells: string[];
 }>();
 
@@ -56,10 +57,10 @@ const isCellBlocked = (row: number, col: number): boolean => {
 };
 
 const emit = defineEmits<{
-	(e: 'placeShip', row: number, col: number, shipData: any): void;
+	(e: 'placeShip', row: number, col: number, shipData: IDragShipData): void;
 }>();
 
-const handlePlace = (row: number, col: number, shipData: any) => {
+const handlePlace = (row: number, col: number, shipData: IDragShipData) => {
 	emit('placeShip', row, col, shipData);
 };
 </script>

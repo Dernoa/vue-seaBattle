@@ -14,9 +14,9 @@
 			:src="src"
 			:width="width"
 			:height="height"
-			:style="{ 
-					transform: currentOrientation === 'vertical' ? 'rotate(90deg)' : 'none',
-					transformOrigin: '20px 20px' 
+			:style="{
+				transform: currentOrientation === 'vertical' ? 'rotate(90deg)' : 'none',
+				transformOrigin: '20px 20px',
 			}"
 			:data-size="size"
 		/>
@@ -27,9 +27,10 @@
 import { useTemplateRef, ref, computed } from 'vue';
 import { makeDraggable } from '@vue-dnd-kit/core';
 
-import type { Orientations } from '@/constants/types';
+import type { Orientation } from '@/constants/types';
+import type { IDragShipData } from '@/constants/interfaces';
 
-const currentOrientation = ref<Orientations>('horizontal');
+const currentOrientation = ref<Orientation>('horizontal');
 
 const props = defineProps<{
 	src: string;
@@ -40,13 +41,10 @@ const props = defineProps<{
 	changeOrientationIsPossible: boolean;
 }>();
 
-const emit = defineEmits<{
-	orientationChange: [orientation: Orientations];
-}>();
 
 const el = useTemplateRef<HTMLElement>('el');
 
-const dragData = computed(() => ({
+const dragData = computed<IDragShipData>(() => ({
 	id: props.id,
 	size: props.size,
 	src: props.src,
@@ -61,13 +59,11 @@ makeDraggable(el, {
 
 const changeOrientation = (event: KeyboardEvent) => {
 	if (
-		(event.key === 'r' || event.key === ' ' || event.key === 'R') &&
-		props.changeOrientationIsPossible === true
+		(event.key.toLocaleLowerCase() === 'r' || event.key === ' ')
 	) {
 		event.preventDefault();
 		currentOrientation.value =
 			currentOrientation.value === 'horizontal' ? 'vertical' : 'horizontal';
-		emit('orientationChange', currentOrientation.value);
 	}
 };
 </script>

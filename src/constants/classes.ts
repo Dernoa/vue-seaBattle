@@ -1,7 +1,6 @@
-import type { IPlacedShip, IAvailableShips } from './interfaces';
-import type { ShipType, Orientations } from './types';
+import type { IPlacedShip, IAvailableShips, IDragShipData } from './interfaces';
+import type { ShipType, Orientation } from './types';
 
-// ==================== Класс для доски игрока ====================
 export class PlayerBoard {
 	placedShips: IPlacedShip[] = [];
 	blockedCells: Set<string> = new Set();
@@ -21,33 +20,30 @@ export class PlayerBoard {
 		return warship1.count + warship2.count + warship3.count + warship4.count === 0;
 	}
 
-	// Проверка возможности размещения
-	canPlaceShip(row: number, col: number, size: number, orientation: Orientations): boolean {
-    if (orientation === 'horizontal') {
-      if (col < 0 || col + size > 10 || row < 0 || row >= 10) return false;
-    } else {
-      if (row < 0 || row + size > 10 || col < 0 || col >= 10) return false;
-    }
-		
-    for (let i = 0; i < size; i++) {
-      const currentRow = orientation === 'horizontal' ? row : row + i;
-      const currentCol = orientation === 'horizontal' ? col + i : col;
+	canPlaceShip(row: number, col: number, size: number, orientation: Orientation): boolean {
+		if (orientation === 'horizontal') {
+			if (col < 0 || col + size > 10 || row < 0 || row >= 10) return false;
+		} else {
+			if (row < 0 || row + size > 10 || col < 0 || col >= 10) return false;
+		}
 
-      // Если хоть одна клетка под корпусом заблокирована (занята другим кораблем или его аурой)
-      if (this.blockedCells.has(`${currentRow}-${currentCol}`)) {
-        return false;
-      }
-    }
+		for (let i = 0; i < size; i++) {
+			const currentRow = orientation === 'horizontal' ? row : row + i;
+			const currentCol = orientation === 'horizontal' ? col + i : col;
 
-		return true
+			if (this.blockedCells.has(`${currentRow}-${currentCol}`)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
-	// Клетки вокруг корабля
 	cellsAround(
 		row: number,
 		col: number,
 		size: number,
-		orientation: Orientations
+		orientation: Orientation
 	): { row: number; col: number }[] {
 		const result: { row: number; col: number }[] = [];
 		const seen = new Set<string>();
@@ -76,22 +72,19 @@ export class PlayerBoard {
 		return result;
 	}
 
-	// Блокировка клеток вокруг размещённого корабля
-	makeCellsNotPlaceable(row: number, col: number, size: number, orientation: Orientations) {
+	makeCellsNotPlaceable(row: number, col: number, size: number, orientation: Orientation) {
 		const cells = this.cellsAround(row, col, size, orientation);
 		cells.forEach((cell) => {
 			this.blockedCells.add(`${cell.row}-${cell.col}`);
 		});
 	}
 
-	// Проверка, свободна ли клетка
 	isPlaceable(row: number, col: number): boolean {
 		return !this.blockedCells.has(`${row}-${col}`);
 	}
 
-	// Размещение корабля
-	placeShip(row: number, col: number, shipData: any) {
-		const shipId = shipData.id as string;
+	placeShip(row: number, col: number, shipData: IDragShipData) {
+		const shipId = shipData.id;
 		const shipType = shipId.split('-')[0] as ShipType;
 		const size = shipData.size;
 
@@ -101,7 +94,7 @@ export class PlayerBoard {
 		}
 
 		if (!this.canPlaceShip(row, col, size, shipData.orientation)) {
-			console.warn("You can't place a ship here");
+			alert("You can't place a ship here");
 			return;
 		}
 
@@ -120,7 +113,6 @@ export class PlayerBoard {
 	}
 }
 
-// ==================== Класс для управления игрой ====================
 export class Game {
 	players: PlayerBoard[];
 	currentPlayerIndex: number = 0;
@@ -131,8 +123,7 @@ export class Game {
 	}
 
 	nextTurn() {
-		console.log('nextTurn called', this.currentPlayerIndex);
 		this.currentPlayerIndex = this.currentPlayerIndex === 0 ? 1 : 0;
 		this.turnCounter++;
-	};
+	}
 }
