@@ -59,7 +59,7 @@ makeDraggable(el, {
 
 const changeOrientation = (event: KeyboardEvent) => {
 	if (
-		(event.key.toLocaleLowerCase() === 'r' || event.key === ' ')
+		(event.key.toLocaleLowerCase() === 'r' || event.key === ' ' && props.changeOrientationIsPossible === true)
 	) {
 		event.preventDefault();
 		currentOrientation.value =

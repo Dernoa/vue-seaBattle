@@ -1,87 +1,57 @@
 <template>
 	<div class="main">
-		<div v-if="game.currentPlayerIndex === 0">
-			<div class="containerNickname">
-				{{ sessionStore.playerNickname }} (Turn {{ game.turnCounter }})
-			</div>
-			<div class="containerPlayGrid">
-				<div>
-					<play-grid
-						:board-id="sessionStore.playerNickname"
-						:placed-ships="player1.placedShips"
-						:blocked-cells="player1.blockedCellsArray"
-						@place-ship="(row, col, shipData) => player1.placeShip(row, col, shipData)"
-					/>
-				</div>
-				<div>
-					<warships-list
-						:warships-available="player1.warshipsAvailable"
-						v-if="!player1.warshipsNotAvailable"
-					/>
-				</div>
-			</div>
-			<div v-if="player1.warshipsNotAvailable">
-				<div v-if="game.turnCounter == 0">
-					<my-button @click="() => game.nextTurn()">Confirm</my-button>
-					<my-button>Reset</my-button>
-				</div>
-				<my-button v-else @click="() => game.nextTurn()">Next Turn</my-button>
-			</div>
-		</div>
+		<LocalPlayerContainer
+			v-if="game.currentPlayerIndex === 0"
+			:nickname="sessionStore.player1Nickname"
+			:turn-counter="game.turnCounter"
+			:player="player1"
+			:is-setup-turn="game.turnCounter === 0"
+			:show-actions="true"
+			@place-ship="(row, col, shipData) => handlePlaceShip(player1, row, col, shipData)"
+			@next-turn="game.nextTurn()"
+			@reset="resetBoard(player1)"
+		/>
 
 		<hr />
 
-		<div v-if="game.currentPlayerIndex === 1">
-			<div class="containerNickname">
-				{{ sessionStore.player2Nickname }} (Turn {{ game.turnCounter }})
-			</div>
-			<div class="containerPlayGrid">
-				<div>
-					<play-grid
-						:board-id="sessionStore.playerNickname"
-						:placed-ships="player2.placedShips"
-						:blocked-cells="player2.blockedCellsArray"
-						@place-ship="(row, col, shipData) => player2.placeShip(row, col, shipData)"
-					/>
-				</div>
-				<div>
-					<warships-list
-						:warships-available="player2.warshipsAvailable"
-						v-if="!player2.warshipsNotAvailable"
-					/>
-				</div>
-			</div>
-			<div v-if="player2.warshipsNotAvailable">
-				<div v-if="game.turnCounter == 0">
-					<my-button @click="() => game.nextTurn()">Confirm</my-button>
-					<my-button>Reset</my-button>
-				</div>
-				<my-button v-else @click="() => game.nextTurn()">Next Turn</my-button>
-			</div>
-		</div>
+		<LocalPlayerContainer
+			v-if="game.currentPlayerIndex === 1"
+			:nickname="sessionStore.player2Nickname"
+			:turn-counter="game.turnCounter"
+			:player="player2"
+			:is-setup-turn="game.turnCounter === 0"
+			:show-actions="true"
+			@place-ship="(row, col, shipData) => handlePlaceShip(player2, row, col, shipData)"
+			@next-turn="game.nextTurn()"
+			@reset="resetBoard(player2)"
+		/>
 	</div>
 </template>
 
 <script setup lang="ts">
-import playGrid from '@/components/playGrid.vue';
-import warshipsList from '@/components/warshipsList.vue';
-import myButton from '@/UI/myButton.vue';
+import LocalPlayerContainer from '@/components/LocalPlayerContainer.vue';
 
 import { useSessionStore } from '@/stores/sessionStore';
 import { reactive } from 'vue';
 import { PlayerBoard, Game } from '@/constants/classes';
+import type { IDragShipData } from '@/constants/interfaces';
 
 const sessionStore = useSessionStore();
 
 const player1 = reactive(new PlayerBoard());
 const player2 = reactive(new PlayerBoard());
 const game = reactive(new Game(player1, player2));
-</script>
 
-<style scoped>
-.containerPlayGrid {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-</style>
+const handlePlaceShip = (
+	player: PlayerBoard,
+	row: number,
+	col: number,
+	shipData: IDragShipData
+) => {
+	player.placeShip(row, col, shipData);
+};
+
+const resetBoard = (player: PlayerBoard) => {
+	Object.assign(player, new PlayerBoard());
+};
+</script>

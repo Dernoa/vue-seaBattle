@@ -21,17 +21,17 @@
 				:style="{
 					left: ship.col * CELL_SIZE + 'px',
 					top: ship.row * CELL_SIZE + 'px',
-					width: ship.orientation === 'horizontal' ? ship.size * CELL_SIZE + 'px' : '40px',
-					height: ship.orientation === 'horizontal' ? '40px' : ship.size * CELL_SIZE + 'px',
+					width: ship.orientation === 'horizontal' ? ship.size * CELL_SIZE + 'px' : 'CELL_SIZE',
+					height: ship.orientation === 'horizontal' ? 'CELL_SIZE' : ship.size * CELL_SIZE + 'px',
 				}"
 			>
 				<img
 					:src="ship.src"
 					:width="ship.size * CELL_SIZE"
-					height="CELL_SIZE"
+					:height="CELL_SIZE"
 					:style="{
 						transform: ship.orientation === 'vertical' ? 'rotate(90deg)' : 'none',
-						transformOrigin: '20px 20px',
+						transformOrigin: `${CELL_SIZE/2}px ${CELL_SIZE/2}px`,
 					}"
 				/>
 			</div>

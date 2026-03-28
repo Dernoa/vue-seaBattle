@@ -1,9 +1,7 @@
 <template>
-	<div>
-		<button class="btn" @click="$emit('click', $event)">
-			<slot></slot>
-		</button>
-	</div>
+	<button class="btn" @click="$emit('click', $event)">
+		<slot></slot>
+	</button>
 </template>
 
 <script setup lang="ts">

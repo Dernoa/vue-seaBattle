@@ -123,7 +123,10 @@ export class Game {
 	}
 
 	nextTurn() {
-		this.currentPlayerIndex = this.currentPlayerIndex === 0 ? 1 : 0;
+		if (this.currentPlayerIndex === 1) {
 		this.turnCounter++;
+		}
+
+		this.currentPlayerIndex = this.currentPlayerIndex === 0 ? 1 : 0;
 	}
 }
