@@ -1,15 +1,30 @@
-import type { IPlacedShip, IAvailableShips, IDragShipData } from './interfaces';
+import type { IPlacedShip, IAvailableShips, IDragShipData, IShotsFired } from './interfaces';
 import type { ShipType, Orientation } from './types';
 
 export class PlayerBoard {
 	placedShips: IPlacedShip[] = [];
 	blockedCells: Set<string> = new Set();
+	shipCellsMap: Map<number, Map<number, boolean>> = new Map();
+	shotsFired: IShotsFired[] = [];
+	shipsHidden: boolean = false;
 	warshipsAvailable: IAvailableShips = {
 		warship1: { size: 1, count: 4 },
 		warship2: { size: 2, count: 3 },
 		warship3: { size: 3, count: 2 },
 		warship4: { size: 4, count: 1 },
 	};
+
+	constructor() {
+		for (let row = 0; row < 10; row++) {
+			const cols = new Map<number, boolean>();
+
+			for (let col = 0; col < 10; col++) {
+				cols.set(col, false);
+			}
+
+			this.shipCellsMap.set(row, cols);
+		}
+	}
 
 	get blockedCellsArray() {
 		return Array.from(this.blockedCells);
@@ -83,6 +98,19 @@ export class PlayerBoard {
 		return !this.blockedCells.has(`${row}-${col}`);
 	}
 
+	hasShipAt(row: number, col: number): boolean {
+		return this.shipCellsMap.get(row)?.get(col) ?? false;
+	}
+
+	markShipCells(row: number, col: number, size: number, orientation: Orientation) {
+		for (let i = 0; i < size; i++) {
+			const currentRow = orientation === 'horizontal' ? row : row + i;
+			const currentCol = orientation === 'horizontal' ? col + i : col;
+
+			this.shipCellsMap.get(currentRow)?.set(currentCol, true);
+		}
+	}
+
 	placeShip(row: number, col: number, shipData: IDragShipData) {
 		const shipId = shipData.id;
 		const shipType = shipId.split('-')[0] as ShipType;
@@ -109,7 +137,38 @@ export class PlayerBoard {
 			src: shipData.src,
 		});
 
+		this.markShipCells(row, col, size, shipData.orientation);
 		this.makeCellsNotPlaceable(row, col, size, shipData.orientation);
+	}
+
+	hideShips() {
+		this.shipsHidden = true;
+	}
+
+	showShips() {
+		this.shipsHidden = false;
+	}
+
+	hasShotAt(row: number, col: number): boolean {
+		return this.shotsFired.some((shot) => shot.row === row && shot.col === col);
+	}
+
+	didShotHitAt(row: number, col: number): boolean {
+		return this.shotsFired.find((shot) => shot.row === row && shot.col === col)?.hittedTheShip ?? false;
+	}
+
+	makeShot(row: number, col: number): boolean {
+		if (this.hasShotAt(row, col)) {
+			return false;
+		}
+
+		this.shotsFired.push({
+			row,
+			col,
+			hittedTheShip: this.hasShipAt(row, col),
+		});
+
+		return true;
 	}
 }
 

@@ -8,6 +8,10 @@
 					:board-id="nickname"
 					:placed-ships="player.placedShips"
 					:blocked-cells="player.blockedCellsArray"
+					:ships-hidden="player.shipsHidden"
+					:game-started="gameStarted"
+					:shots-fired="player.shotsFired"
+					@make-shot="handleShot"
 					@place-ship="handlePlaceShip"
 				/>
 			</div>
@@ -19,11 +23,10 @@
 
 		<div v-if="showActions && player.warshipsNotAvailable">
 			<div v-if="isSetupTurn">
-				<my-button @click="emit('nextTurn')">Confirm</my-button>
+				<my-button @click="startGame">Confirm</my-button>
 				<my-button @click="emit('reset')">Reset</my-button>
 			</div>
 
-			<my-button v-else @click="emit('nextTurn')">Next Turn</my-button>
 		</div>
 	</div>
 </template>
@@ -36,16 +39,18 @@ import myButton from '@/UI/myButton.vue';
 import type { PlayerBoard } from '@/constants/classes';
 import type { IDragShipData } from '@/constants/interfaces';
 
-defineProps<{
+const props = defineProps<{
 	nickname: string;
 	turnCounter: number;
 	player: PlayerBoard;
 	isSetupTurn: boolean;
 	showActions: boolean;
+	gameStarted: boolean;
 }>();
 
 const emit = defineEmits<{
 	placeShip: [row: number, col: number, shipData: IDragShipData];
+	makeShot: [row: number, col: number];
 	nextTurn: [];
 	reset: [];
 }>();
@@ -53,6 +58,15 @@ const emit = defineEmits<{
 const handlePlaceShip = (row: number, col: number, shipData: IDragShipData) => {
 	emit('placeShip', row, col, shipData);
 };
+
+const handleShot = (row: number, col: number) => {
+	emit('makeShot', row, col);
+};
+
+const startGame = () => {
+	emit('nextTurn');
+	props.player.hideShips();
+}
 </script>
 
 <style scoped>

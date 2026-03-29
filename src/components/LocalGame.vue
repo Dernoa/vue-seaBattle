@@ -1,29 +1,16 @@
 <template>
 	<div class="main">
 		<LocalPlayerContainer
-			v-if="game.currentPlayerIndex === 0"
-			:nickname="sessionStore.player1Nickname"
+			:nickname="activeNickname"
 			:turn-counter="game.turnCounter"
-			:player="player1"
+			:player="gameStarted ? targetBoard : activeBoard"
 			:is-setup-turn="game.turnCounter === 0"
 			:show-actions="true"
-			@place-ship="(row, col, shipData) => handlePlaceShip(player1, row, col, shipData)"
+			:game-started="gameStarted"
+			@make-shot="(row, col) => handleShot(row, col)"
+			@place-ship="(row, col, shipData) => handlePlaceShip(activeBoard, row, col, shipData)"
 			@next-turn="game.nextTurn()"
-			@reset="resetBoard(player1)"
-		/>
-
-		<hr />
-
-		<LocalPlayerContainer
-			v-if="game.currentPlayerIndex === 1"
-			:nickname="sessionStore.player2Nickname"
-			:turn-counter="game.turnCounter"
-			:player="player2"
-			:is-setup-turn="game.turnCounter === 0"
-			:show-actions="true"
-			@place-ship="(row, col, shipData) => handlePlaceShip(player2, row, col, shipData)"
-			@next-turn="game.nextTurn()"
-			@reset="resetBoard(player2)"
+			@reset="resetBoard(activeBoard)"
 		/>
 	</div>
 </template>
@@ -32,7 +19,7 @@
 import LocalPlayerContainer from '@/components/LocalPlayerContainer.vue';
 
 import { useSessionStore } from '@/stores/sessionStore';
-import { reactive } from 'vue';
+import { computed, reactive } from 'vue';
 import { PlayerBoard, Game } from '@/constants/classes';
 import type { IDragShipData } from '@/constants/interfaces';
 
@@ -42,6 +29,13 @@ const player1 = reactive(new PlayerBoard());
 const player2 = reactive(new PlayerBoard());
 const game = reactive(new Game(player1, player2));
 
+const gameStarted = computed(() => game.turnCounter > 0);
+const activeBoard = computed(() => (game.currentPlayerIndex === 0 ? player1 : player2));
+const targetBoard = computed(() => (game.currentPlayerIndex === 0 ? player2 : player1));
+const activeNickname = computed(() =>
+	game.currentPlayerIndex === 0 ? sessionStore.player1Nickname : sessionStore.player2Nickname
+);
+
 const handlePlaceShip = (
 	player: PlayerBoard,
 	row: number,
@@ -49,6 +43,14 @@ const handlePlaceShip = (
 	shipData: IDragShipData
 ) => {
 	player.placeShip(row, col, shipData);
+};
+
+const handleShot = (row: number, col: number) => {
+	const shotAccepted = targetBoard.value.makeShot(row, col);
+
+	if (shotAccepted) {
+		game.nextTurn();
+	}
 };
 
 const resetBoard = (player: PlayerBoard) => {

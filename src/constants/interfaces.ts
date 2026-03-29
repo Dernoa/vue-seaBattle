@@ -24,3 +24,9 @@ export interface IDragShipData {
 	orientation: Orientation;
 	src: string;
 }
+
+export interface IShotsFired {
+	row: number;
+	col: number;
+	hittedTheShip: boolean;
+}

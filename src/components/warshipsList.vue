@@ -10,7 +10,7 @@
 				:width="`${warship.size * CELL_SIZE}px`"
 				:height="`${CELL_SIZE}px`"
 				:size="warship.size"
-				:id="`warship${warship.size}-${count}`"
+				:id="`warship${warship.size}-${Date.now()}`"
 				:change-orientation-is-possible="true"
 			/>
 		</div>

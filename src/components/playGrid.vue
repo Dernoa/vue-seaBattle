@@ -9,7 +9,12 @@
 					:row="row - 1"
 					:col="col - 1"
 					:blocked="isCellBlocked(row - 1, col - 1)"
+					:fired="isCellFired(row - 1, col - 1)"
+					:hitted="didCellHit(row - 1, col - 1)"
+					:highlight-blocked="shouldHighlightBlockedCell(row - 1, col - 1)"
+					:game-started="gameStarted"
 					@place-ship="handlePlace"
+					@make-shot="handleShot"
 				/>
 			</template>
 		</div>
@@ -18,6 +23,7 @@
 				v-for="ship in placedShips"
 				:key="ship.id"
 				class="placed-ship"
+				:class="{ hidden: shipsHidden }"
 				:style="{
 					left: ship.col * CELL_SIZE + 'px',
 					top: ship.row * CELL_SIZE + 'px',
@@ -44,24 +50,44 @@ import DroppableCell from './DroppableCell.vue';
 
 import { CELL_SIZE } from '@/constants/constants';
 
-import type { IPlacedShip, IDragShipData } from '@/constants/interfaces';
+import type { IPlacedShip, IDragShipData, IShotsFired } from '@/constants/interfaces';
 
 const props = defineProps<{
 	boardId?: string;
 	placedShips: IPlacedShip[];
+	shotsFired: IShotsFired[];
 	blockedCells: string[];
+	shipsHidden: boolean;
+	gameStarted: boolean;
 }>();
 
 const isCellBlocked = (row: number, col: number): boolean => {
 	return props.blockedCells.includes(`${row}-${col}`);
 };
 
+const isCellFired = (row: number, col: number): boolean => {
+	return props.shotsFired.some((shot) => shot.row === row && shot.col === col);
+};
+
+const didCellHit = (row: number, col: number): boolean => {
+	return props.shotsFired.find((shot) => shot.row === row && shot.col === col)?.hittedTheShip ?? false;
+};
+
+const shouldHighlightBlockedCell = (row: number, col: number): boolean => {
+	return !props.shipsHidden && isCellBlocked(row, col);
+};
+
 const emit = defineEmits<{
 	(e: 'placeShip', row: number, col: number, shipData: IDragShipData): void;
+	(e: 'makeShot', row: number, col: number): void;
 }>();
 
 const handlePlace = (row: number, col: number, shipData: IDragShipData) => {
 	emit('placeShip', row, col, shipData);
+};
+
+const handleShot = (row: number, col: number) => {
+	emit('makeShot', row, col);
 };
 </script>
 
@@ -95,6 +121,14 @@ const handlePlace = (row: number, col: number, shipData: IDragShipData) => {
 	cursor: not-allowed;
 }
 
+.cell[data-firedShot='true'][data-hittedTheShot='false'] {
+	background-color: #90caf9;
+}
+
+.cell[data-firedShot='true'][data-hittedTheShot='true'] {
+	background-color: #ef9a9a;
+}
+
 .ships-layer {
 	position: absolute;
 	top: 0;
@@ -107,5 +141,9 @@ const handlePlace = (row: number, col: number, shipData: IDragShipData) => {
 .placed-ship {
 	position: absolute;
 	pointer-events: none;
+}
+
+.placed-ship.hidden {
+	display: none;
 }
 </style>
