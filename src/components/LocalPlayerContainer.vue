@@ -1,6 +1,7 @@
 <template>
 	<div class="playerContainer">
 		<div class="containerNickname">{{ nickname }} (Turn {{ turnCounter }})</div>
+		<div v-if="statusLabel" class="containerStatus">{{ statusLabel }}</div>
 
 		<div class="containerPlayGrid">
 			<div>
@@ -10,23 +11,24 @@
 					:blocked-cells="player.blockedCellsArray"
 					:ships-hidden="player.shipsHidden"
 					:game-started="gameStarted"
+					:can-place-ships="canPlaceShips"
+					:can-make-shots="canMakeShots"
 					:shots-fired="player.shotsFired"
 					@make-shot="handleShot"
 					@place-ship="handlePlaceShip"
 				/>
 			</div>
 
-			<div v-if="!player.warshipsNotAvailable">
+			<div v-if="showAvailableShips && !player.warshipsNotAvailable">
 				<warships-list :warships-available="player.warshipsAvailable" />
 			</div>
 		</div>
 
-		<div v-if="showActions && player.warshipsNotAvailable">
-			<div v-if="isSetupTurn">
-				<my-button @click="startGame">Confirm</my-button>
+		<div v-if="showSetupActions && player.warshipsNotAvailable">
+			<div>
+				<my-button @click="emit('confirm')">Confirm</my-button>
 				<my-button @click="emit('reset')">Reset</my-button>
 			</div>
-
 		</div>
 	</div>
 </template>
@@ -43,15 +45,18 @@ const props = defineProps<{
 	nickname: string;
 	turnCounter: number;
 	player: PlayerBoard;
-	isSetupTurn: boolean;
-	showActions: boolean;
 	gameStarted: boolean;
+	canPlaceShips: boolean;
+	canMakeShots: boolean;
+	showAvailableShips: boolean;
+	showSetupActions: boolean;
+	statusLabel?: string;
 }>();
 
 const emit = defineEmits<{
 	placeShip: [row: number, col: number, shipData: IDragShipData];
 	makeShot: [row: number, col: number];
-	nextTurn: [];
+	confirm: [];
 	reset: [];
 }>();
 
@@ -62,17 +67,27 @@ const handlePlaceShip = (row: number, col: number, shipData: IDragShipData) => {
 const handleShot = (row: number, col: number) => {
 	emit('makeShot', row, col);
 };
-
-const startGame = () => {
-	emit('nextTurn');
-	props.player.hideShips();
-}
 </script>
 
 <style scoped>
+.playerContainer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.containerNickname {
+	font-weight: 700;
+}
+
+.containerStatus {
+	margin-top: 8px;
+}
+
 .containerPlayGrid {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	flex-wrap: wrap;
 }
 </style>

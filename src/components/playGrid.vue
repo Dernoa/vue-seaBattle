@@ -13,6 +13,8 @@
 					:hitted="didCellHit(row - 1, col - 1)"
 					:highlight-blocked="shouldHighlightBlockedCell(row - 1, col - 1)"
 					:game-started="gameStarted"
+					:can-place-ships="canPlaceShips"
+					:can-make-shots="canMakeShots"
 					@place-ship="handlePlace"
 					@make-shot="handleShot"
 				/>
@@ -27,8 +29,8 @@
 				:style="{
 					left: ship.col * CELL_SIZE + 'px',
 					top: ship.row * CELL_SIZE + 'px',
-					width: ship.orientation === 'horizontal' ? ship.size * CELL_SIZE + 'px' : 'CELL_SIZE',
-					height: ship.orientation === 'horizontal' ? 'CELL_SIZE' : ship.size * CELL_SIZE + 'px',
+					width: ship.orientation === 'horizontal' ? ship.size * CELL_SIZE + 'px' : `${CELL_SIZE}px`,
+					height: ship.orientation === 'horizontal' ? `${CELL_SIZE}px` : ship.size * CELL_SIZE + 'px',
 				}"
 			>
 				<img
@@ -59,6 +61,8 @@ const props = defineProps<{
 	blockedCells: string[];
 	shipsHidden: boolean;
 	gameStarted: boolean;
+	canPlaceShips: boolean;
+	canMakeShots: boolean;
 }>();
 
 const isCellBlocked = (row: number, col: number): boolean => {
@@ -83,10 +87,18 @@ const emit = defineEmits<{
 }>();
 
 const handlePlace = (row: number, col: number, shipData: IDragShipData) => {
+	if (!props.canPlaceShips) {
+		return;
+	}
+
 	emit('placeShip', row, col, shipData);
 };
 
 const handleShot = (row: number, col: number) => {
+	if (!props.canMakeShots) {
+		return;
+	}
+
 	emit('makeShot', row, col);
 };
 </script>
