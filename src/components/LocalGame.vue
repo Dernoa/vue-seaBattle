@@ -87,7 +87,7 @@ const handlePlaceShip = (
 const handleShot = (targetBoard: PlayerBoard, row: number, col: number) => {
 	const shotAccepted = targetBoard.makeShot(row, col);
 
-	if (shotAccepted) {
+	if (shotAccepted && !targetBoard.didShotHitAt(row, col)) {
 		game.nextTurn();
 	}
 };
