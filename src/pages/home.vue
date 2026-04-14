@@ -41,10 +41,14 @@
 					<my-button @click="buttonSetGameTypeAndRun('vsBot')">VS BOT</my-button>
 				</div>
 				<div v-if="wantPlayLocal">
-					<my-button @click="buttonSetGameTypeAndRun('vsPlayerLocal')">VS PLAYER(Local)</my-button>
+					<my-button @click="buttonSetGameTypeAndRun('vsPlayerLocal')"
+						>VS PLAYER(Local)</my-button
+					>
 				</div>
 				<div>
-					<my-button @click="buttonSetGameTypeAndRun('vsPlayerNetwork')">VS PLAYER(Network)</my-button>
+					<my-button @click="buttonSetGameTypeAndRun('vsPlayerNetwork')"
+						>VS PLAYER(Network)</my-button
+					>
 				</div>
 			</div>
 		</div>

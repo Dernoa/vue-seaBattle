@@ -9,6 +9,11 @@ export interface IPlacedShip {
 	src: string;
 }
 
+export interface IBoardCell {
+	row: number;
+	col: number;
+}
+
 export interface IAvailableShips {
 	warship1: { size: number; count: number };
 	warship2: { size: number; count: number };
