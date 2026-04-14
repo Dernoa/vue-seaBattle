@@ -1,5 +1,5 @@
 <template>
-	<div class="gridContainer" :id="boardId" ref="gridContainer">
+	<div class="gridContainer" :id="boardId">
 		<div class="grid">
 			<template v-for="row in 10" :key="row">
 				<DroppableCell
@@ -8,8 +8,15 @@
 					class="cell"
 					:row="row - 1"
 					:col="col - 1"
-					:on-place="handlePlace"
-					:placeable="isPlaceable(row - 1, col - 1)"
+					:blocked="isCellBlocked(row - 1, col - 1)"
+					:fired="isCellFired(row - 1, col - 1)"
+					:hitted="didCellHit(row - 1, col - 1)"
+					:highlight-blocked="shouldHighlightBlockedCell(row - 1, col - 1)"
+					:game-started="gameStarted"
+					:can-place-ships="canPlaceShips"
+					:can-make-shots="canMakeShots"
+					@place-ship="handlePlace"
+					@make-shot="handleShot"
 				/>
 			</template>
 		</div>
@@ -18,41 +25,90 @@
 				v-for="ship in placedShips"
 				:key="ship.id"
 				class="placed-ship"
+				:class="{ hidden: shipsHidden }"
 				:style="{
-					left: ship.col * 40 + 'px',
-					top: ship.row * 40 + 'px',
-					width: ship.size * 40 + 'px',
-					height: '40px',
+					left: ship.col * CELL_SIZE + 'px',
+					top: ship.row * CELL_SIZE + 'px',
+					width:
+						ship.orientation === 'horizontal'
+							? ship.size * CELL_SIZE + 'px'
+							: `${CELL_SIZE}px`,
+					height:
+						ship.orientation === 'horizontal'
+							? `${CELL_SIZE}px`
+							: ship.size * CELL_SIZE + 'px',
 				}"
 			>
-				<img :src="ship.src" :width="ship.size * 40" height="40" />
+				<img
+					:src="ship.src"
+					:width="ship.size * CELL_SIZE"
+					:height="CELL_SIZE"
+					:style="{
+						transform: ship.orientation === 'vertical' ? 'rotate(90deg)' : 'none',
+						transformOrigin: `${CELL_SIZE / 2}px ${CELL_SIZE / 2}px`,
+					}"
+				/>
 			</div>
 		</div>
 	</div>
 </template>
->
 
 <script setup lang="ts">
 import DroppableCell from './DroppableCell.vue';
 
-import type { IPlacedShip } from '@/constants/interfaces';
+import { CELL_SIZE } from '@/constants/constants';
+
+import type { IPlacedShip, IDragShipData, IShotsFired } from '@/constants/interfaces';
 
 const props = defineProps<{
 	boardId?: string;
-	placedShips?: IPlacedShip[];
+	placedShips: IPlacedShip[];
+	shotsFired: IShotsFired[];
 	blockedCells: string[];
+	shipsHidden: boolean;
+	gameStarted: boolean;
+	canPlaceShips: boolean;
+	canMakeShots: boolean;
 }>();
+
+const isCellBlocked = (row: number, col: number): boolean => {
+	return props.blockedCells.includes(`${row}-${col}`);
+};
+
+const isCellFired = (row: number, col: number): boolean => {
+	return props.shotsFired.some((shot) => shot.row === row && shot.col === col);
+};
+
+const didCellHit = (row: number, col: number): boolean => {
+	return (
+		props.shotsFired.find((shot) => shot.row === row && shot.col === col)?.hittedTheShip ??
+		false
+	);
+};
+
+const shouldHighlightBlockedCell = (row: number, col: number): boolean => {
+	return !props.shipsHidden && isCellBlocked(row, col);
+};
 
 const emit = defineEmits<{
-	(e: 'placeShip', row: number, col: number, shipData: any): void;
+	(e: 'placeShip', row: number, col: number, shipData: IDragShipData): void;
+	(e: 'makeShot', row: number, col: number): void;
 }>();
 
-const handlePlace = (row: number, col: number, shipData: any) => {
+const handlePlace = (row: number, col: number, shipData: IDragShipData) => {
+	if (!props.canPlaceShips) {
+		return;
+	}
+
 	emit('placeShip', row, col, shipData);
 };
 
-const isPlaceable = (row: number, col: number): boolean => {
-	return !props.blockedCells.includes(`${row}-${col}`);
+const handleShot = (row: number, col: number) => {
+	if (!props.canMakeShots) {
+		return;
+	}
+
+	emit('makeShot', row, col);
 };
 </script>
 
@@ -86,6 +142,14 @@ const isPlaceable = (row: number, col: number): boolean => {
 	cursor: not-allowed;
 }
 
+.cell[data-firedShot='true'][data-hittedTheShot='false'] {
+	background-color: #90caf9;
+}
+
+.cell[data-firedShot='true'][data-hittedTheShot='true'] {
+	background-color: #ef9a9a;
+}
+
 .ships-layer {
 	position: absolute;
 	top: 0;
@@ -98,5 +162,9 @@ const isPlaceable = (row: number, col: number): boolean => {
 .placed-ship {
 	position: absolute;
 	pointer-events: none;
+}
+
+.placed-ship.hidden {
+	display: none;
 }
 </style>

@@ -6,7 +6,7 @@
 				<div>
 					<my-input
 						input-type="text"
-						:placeholder="sessionStore.playerNickname"
+						:placeholder="sessionStore.player1Nickname"
 						v-model="nickname"
 						class="nameMyInput"
 					></my-input>
@@ -38,13 +38,17 @@
 			<div>Choose type of a game</div>
 			<div class="gameTypeContainer">
 				<div>
-					<my-button @click="buttonSetGameTypeAndRun(0)">VS BOT</my-button>
+					<my-button @click="buttonSetGameTypeAndRun('vsBot')">VS BOT</my-button>
 				</div>
 				<div v-if="wantPlayLocal">
-					<my-button @click="buttonSetGameTypeAndRun(1)">VS PLAYER(Local)</my-button>
+					<my-button @click="buttonSetGameTypeAndRun('vsPlayerLocal')"
+						>VS PLAYER(Local)</my-button
+					>
 				</div>
 				<div>
-					<my-button @click="buttonSetGameTypeAndRun(2)">VS PLAYER(Network)</my-button>
+					<my-button @click="buttonSetGameTypeAndRun('vsPlayerNetwork')"
+						>VS PLAYER(Network)</my-button
+					>
 				</div>
 			</div>
 		</div>
@@ -53,10 +57,11 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import myInput from '@/UI/myInput.vue';
 import myButton from '@/UI/myButton.vue';
 import { useSessionStore } from '@/stores/sessionStore';
+import type { GameMode } from '@/constants/types';
 
 const sessionStore = useSessionStore();
 const nickname = ref('');
@@ -65,16 +70,21 @@ const wantPlayLocal = ref(false);
 
 const router = useRouter();
 
-function buttonSetGameTypeAndRun(type: number) {
+function buttonSetGameTypeAndRun(type: GameMode) {
 	sessionStore.setGameType(type);
-	router.push('/game');
+	router.push({ name: 'game' });
 }
 
 function buttonSaveFirstPlayerNickname() {
-	sessionStore.setFirstPlayerNickname(nickname.value);
+	const trimmedNickname = nickname.value.trim();
+	if (!nickname.value.trim()) return;
+	sessionStore.setFirstPlayerNickname(trimmedNickname);
 }
+
 function buttonSaveSecondPlayerNickname() {
-	sessionStore.setSecondPlayerNickname(nickname2.value);
+	const trimmedNickname2 = nickname2.value.trim();
+	if (!nickname2.value.trim()) return;
+	sessionStore.setSecondPlayerNickname(trimmedNickname2);
 }
 function addSecondPlayer() {
 	wantPlayLocal.value = true;
