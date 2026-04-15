@@ -1,7 +1,7 @@
 <template>
 	<DnDProvider>
 		<div class="app">
-				<router-view></router-view>
+			<router-view></router-view>
 		</div>
 	</DnDProvider>
 </template>

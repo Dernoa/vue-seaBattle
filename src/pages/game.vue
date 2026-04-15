@@ -11,7 +11,7 @@
 	<div v-else-if="sessionStore.selectedGameMode === 'vsPlayerNetwork'"></div>
 	<div v-else>
 		<h1>Game mode is not selected.</h1>
-		<my-button @click="router.push({ name: 'home' });">Back to home</my-button>
+		<my-button @click="router.push({ name: 'home' })">Back to home</my-button>
 	</div>
 </template>
 

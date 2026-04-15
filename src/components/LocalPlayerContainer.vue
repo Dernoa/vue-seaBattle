@@ -2,6 +2,9 @@
 	<div class="playerContainer">
 		<div class="containerNickname">{{ nickname }} (Turn {{ turnCounter }})</div>
 		<div v-if="statusLabel" class="containerStatus">{{ statusLabel }}</div>
+		<div v-if="gameStarted" class="destroyedShipsCounter">
+			Destroyed ships: {{ player.destroyedShipsCount }} / {{ player.totalShipsCount }}
+		</div>
 
 		<div class="containerPlayGrid">
 			<div>
@@ -82,6 +85,11 @@ const handleShot = (row: number, col: number) => {
 
 .containerStatus {
 	margin-top: 8px;
+}
+
+.destroyedShipsCounter {
+	margin-top: 8px;
+	font-weight: 700;
 }
 
 .containerPlayGrid {

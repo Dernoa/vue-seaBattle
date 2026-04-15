@@ -29,8 +29,14 @@
 				:style="{
 					left: ship.col * CELL_SIZE + 'px',
 					top: ship.row * CELL_SIZE + 'px',
-					width: ship.orientation === 'horizontal' ? ship.size * CELL_SIZE + 'px' : `${CELL_SIZE}px`,
-					height: ship.orientation === 'horizontal' ? `${CELL_SIZE}px` : ship.size * CELL_SIZE + 'px',
+					width:
+						ship.orientation === 'horizontal'
+							? ship.size * CELL_SIZE + 'px'
+							: `${CELL_SIZE}px`,
+					height:
+						ship.orientation === 'horizontal'
+							? `${CELL_SIZE}px`
+							: ship.size * CELL_SIZE + 'px',
 				}"
 			>
 				<img
@@ -39,7 +45,7 @@
 					:height="CELL_SIZE"
 					:style="{
 						transform: ship.orientation === 'vertical' ? 'rotate(90deg)' : 'none',
-						transformOrigin: `${CELL_SIZE/2}px ${CELL_SIZE/2}px`,
+						transformOrigin: `${CELL_SIZE / 2}px ${CELL_SIZE / 2}px`,
 					}"
 				/>
 			</div>
@@ -74,7 +80,10 @@ const isCellFired = (row: number, col: number): boolean => {
 };
 
 const didCellHit = (row: number, col: number): boolean => {
-	return props.shotsFired.find((shot) => shot.row === row && shot.col === col)?.hittedTheShip ?? false;
+	return (
+		props.shotsFired.find((shot) => shot.row === row && shot.col === col)?.hittedTheShip ??
+		false
+	);
 };
 
 const shouldHighlightBlockedCell = (row: number, col: number): boolean => {

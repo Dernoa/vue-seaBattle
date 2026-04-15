@@ -30,4 +30,3 @@ const props = defineProps<{
 
 const warships = Object.values(props.warshipsAvailable);
 </script>
-

@@ -1,4 +1,10 @@
-import type { IPlacedShip, IAvailableShips, IDragShipData, IShotsFired } from './interfaces';
+import type {
+	IBoardCell,
+	IPlacedShip,
+	IAvailableShips,
+	IDragShipData,
+	IShotsFired,
+} from './interfaces';
 import type { ShipType, Orientation } from './types';
 
 export class PlayerBoard {
@@ -33,6 +39,18 @@ export class PlayerBoard {
 	get warshipsNotAvailable() {
 		const { warship1, warship2, warship3, warship4 } = this.warshipsAvailable;
 		return warship1.count + warship2.count + warship3.count + warship4.count === 0;
+	}
+
+	get destroyedShips() {
+		return this.placedShips.filter((ship) => this.isShipDestroyed(ship));
+	}
+
+	get destroyedShipsCount() {
+		return this.destroyedShips.length;
+	}
+
+	get totalShipsCount() {
+		return this.placedShips.length;
 	}
 
 	canPlaceShip(row: number, col: number, size: number, orientation: Orientation): boolean {
@@ -111,6 +129,23 @@ export class PlayerBoard {
 		}
 	}
 
+	getShipCells(ship: IPlacedShip): IBoardCell[] {
+		const cells: IBoardCell[] = [];
+
+		for (let i = 0; i < ship.size; i++) {
+			cells.push({
+				row: ship.orientation === 'horizontal' ? ship.row : ship.row + i,
+				col: ship.orientation === 'horizontal' ? ship.col + i : ship.col,
+			});
+		}
+
+		return cells;
+	}
+
+	isShipDestroyed(ship: IPlacedShip): boolean {
+		return this.getShipCells(ship).every((cell) => this.didShotHitAt(cell.row, cell.col));
+	}
+
 	placeShip(row: number, col: number, shipData: IDragShipData) {
 		const shipId = shipData.id;
 		const shipType = shipId.split('-')[0] as ShipType;
@@ -183,7 +218,7 @@ export class Game {
 
 	nextTurn() {
 		if (this.currentPlayerIndex === 1) {
-		this.turnCounter++;
+			this.turnCounter++;
 		}
 
 		this.currentPlayerIndex = this.currentPlayerIndex === 0 ? 1 : 0;
