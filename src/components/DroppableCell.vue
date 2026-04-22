@@ -7,6 +7,7 @@
 		:data-hittedTheShot="hitted ? 'true' : 'false'"
 		:id="`${row}-${col}`"
 		class="droppable-cell"
+		:class="{ 'cell-highlight': isActive }"
 		ref="el"
 		@click="handleClick"
 	>
@@ -15,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { useTemplateRef } from 'vue';
+import { useTemplateRef, ref } from 'vue';
 import { makeDroppable } from '@vue-dnd-kit/core';
 
 import type { IDragShipData } from '@/constants/interfaces';
@@ -36,15 +37,30 @@ const emit = defineEmits<{
 }>();
 
 const el = useTemplateRef<HTMLElement>('el');
+const isActive = ref(false); 
+
 
 makeDroppable(el, {
 	events: {
-		onDrop: (event) => {
-			if (props.blocked) {
+		onDragEnter: () => {
+			if (!props.blocked && !props.gameStarted) {
+				isActive.value = true;
+			}
+		},
+		
+		onDragLeave: () => {
+			isActive.value = false;
+		},
+		
+		onDrop: (event: any) => {
+			isActive.value = false; 
+			
+			if (props.blocked || props.gameStarted) {
 				return;
 			}
 
-			const shipData = event.draggedItems[0]?.data as IDragShipData | undefined;
+			// Доступ к данным корабля
+			const shipData = event.draggedItems?.[0]?.data as IDragShipData | undefined;
 
 			if (shipData) {
 				emit('placeShip', props.row, props.col, shipData);
@@ -67,8 +83,26 @@ const handleClick = () => {
 	justify-content: center;
 	width: 100%;
 	height: 100%;
+	transition: all 0.2s ease;
+	cursor: pointer;
 }
 
+/* 🟢 Стиль подсветки при наведении корабля */
+.cell-highlight {
+	background-color: rgba(46, 204, 113, 0.6);
+	transform: scale(1.05);
+	border-radius: 6px;
+	box-shadow: 0 0 0 3px #27ae60;
+	z-index: 10;
+}
+
+/* 🔴 Запрещённые для размещения клетки */
+.droppable-cell[data-placeable='false'] {
+	background-color: rgba(231, 76, 60, 0.2);
+	cursor: not-allowed;
+}
+
+/* Маркеры выстрелов */
 .shot-marker {
 	font-size: 24px;
 	font-weight: 700;
