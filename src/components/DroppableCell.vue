@@ -42,13 +42,13 @@ const isActive = ref(false);
 
 makeDroppable(el, {
 	events: {
-		onDragEnter: () => {
+		onEnter: () => {
 			if (!props.blocked && !props.gameStarted) {
 				isActive.value = true;
 			}
 		},
 		
-		onDragLeave: () => {
+		onLeave: () => {
 			isActive.value = false;
 		},
 		
@@ -59,7 +59,6 @@ makeDroppable(el, {
 				return;
 			}
 
-			// Доступ к данным корабля
 			const shipData = event.draggedItems?.[0]?.data as IDragShipData | undefined;
 
 			if (shipData) {
@@ -87,7 +86,6 @@ const handleClick = () => {
 	cursor: pointer;
 }
 
-/* 🟢 Стиль подсветки при наведении корабля */
 .cell-highlight {
 	background-color: rgba(46, 204, 113, 0.6);
 	transform: scale(1.05);
@@ -96,13 +94,11 @@ const handleClick = () => {
 	z-index: 10;
 }
 
-/* 🔴 Запрещённые для размещения клетки */
 .droppable-cell[data-placeable='false'] {
 	background-color: rgba(231, 76, 60, 0.2);
 	cursor: not-allowed;
 }
 
-/* Маркеры выстрелов */
 .shot-marker {
 	font-size: 24px;
 	font-weight: 700;
